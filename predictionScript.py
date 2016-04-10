@@ -4,6 +4,7 @@ import copy
 from nltk.tokenize import TweetTokenizer
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
+import re
 
 class assignment2_Part1:
 	def __init__(self):
@@ -11,7 +12,8 @@ class assignment2_Part1:
 		print temp
 		self.data_happy = []
 		for item in temp:
-			self.data_happy.append(item.encode('ascii','ignore'))
+			result = re.sub(r"http\S+", "", item.encode('ascii','ignore'))
+			self.data_happy.append(result)
 
 		temp = open('Assignment_II/data/neg_examples_sad.txt','r')
 		print temp
@@ -29,7 +31,7 @@ class assignment2_Part1:
 		print self.data_happy[0]
 		for item in self.data_happy:
 			temp_tokenized = tweetTokenizerInitialization.tokenize(item)
-			temp_tokenized = ([item1.encode('ascii','ignore') for item1 in temp_tokenized if item1.encode('ascii','ignore')!= 'RT'])
+			temp_tokenized = ([item1.encode('ascii','ignore') for item1 in temp_tokenized if (item1.encode('ascii','ignore')!= 'RT' and item1.encode('ascii','ignore')!='http')] )
 			temp_tokenized = " ".join(temp_tokenized)
 			temp_tokenized = regExpTokenizer.tokenize(temp_tokenized)
 
@@ -48,6 +50,7 @@ class assignment2_Part1:
 
 		for item in new_happyTweets_tokenized:
 			print item
+
 		# if stopWordInstruction==True:
 		# 	pass
 		# 	for item in happyTweetsTokenized:
