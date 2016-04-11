@@ -15,13 +15,19 @@ class assignment2_Part1:
 		self.data_happy = []
 		for item in temp:
 			result = re.sub(r"http\S+", "", item.encode('ascii','ignore'))
+			if 'R' == result[0] and 'T'==result[1]:
+				continue
 			self.data_happy.append(result)
+		# for item in self.data_happy:
+		# 	print item
 
 		temp = open('Assignment_II/data/neg_examples_sad.txt','r')
 		print temp
 		self.data_sad = []
 		for item in temp:
 			result = re.sub(r"http\S+", "", item.encode('ascii','ignore'))
+			if 'R' == result[0] and 'T'==result[1]:
+				continue
 			self.data_sad.append(result)
 
 	def tokenizeDocument(self,stopWordInstruction=True):
@@ -198,12 +204,13 @@ class assignment2_Part1:
 		for item in list_ngrams:
 			dict_happy[str(item)] = []
 
-		small_list_tokenized = self.new_happyTweets_tokenized[:5]
+		# small_list_tokenized = copy.deepcopy(self.new_happyTweets_tokenized)
+		small_list_tokenized = copy.deepcopy(self.new_sadTweets_tokenized)
 
 		print len(small_list_tokenized)
 		print small_list_tokenized
 
-		with open('temp_file.tsv', 'w') as outfile:
+		with open(filename, 'w') as outfile:
 			# writer = csv.writer(outfile, delimiter="\t")
 			for item in range(0,len(small_list_tokenized)):
 				# dict_happy['tweets_here01'].append(self.data_happy[item])
@@ -211,38 +218,62 @@ class assignment2_Part1:
 				for i in small_list_tokenized[item]:
 					ngram_currentTweet.append(i)
 				bigram_currentTweet = nltk.bigrams(small_list_tokenized[item])
+				counter_here = 0
 				for i in bigram_currentTweet:
 					ngram_currentTweet.append(i)
+					counter_here+=1
+				denominator_bi = counter_here
 				trigram_currentTweet = nltk.trigrams(small_list_tokenized[item])
+				counter_here = 0
 				for i in trigram_currentTweet:
 					ngram_currentTweet.append(i)
+					counter_here+=1
+				denominator_tri=counter_here
 				temporary_list = []
 				for key in list_ngrams:
-					
-					if key in small_list_tokenized[item] and key != 'tweets_here01':
-						temp_join = " ".join(small_list_tokenized[item])
-
-						count=0
-						match=re.compile(key)
-						count+=len(match.findall(temp_join))
-						dict_happy[key].append(float(count)/len(small_list_tokenized[item]))
-						temporary_list.append(str(float(count)/len(small_list_tokenized[item])))
-					elif re.compile(key) in nltk.bigrams(small_list_tokenized[item]):
-						print key
-						raw_input("Bi Gram Match")
-
+					if key in ngram_currentTweet:
 						count = 0
-						match = re.compile(key) 
-						for bigram_temp_here in nltk.bigrams(small_list_tokenized[item]):
-							if match == bigram_temp_here:
+						for iterator in ngram_currentTweet:
+							if key==iterator:
 								count+=1
-						temporary_list.append(str(float(count)/len(nltk.bigrams(small_list_tokenized[item]))))
+						print type(key)
+						print len(key)
+						denominator = 0
+						if key in small_list_tokenized[item]:
+							denominator=len(small_list_tokenized[item])
+						elif len(key)==2:
+							# denominator = len(nltk.bigrams(small_list_tokenized[item]))
+							denominator = denominator_bi
+						elif len(key)==3:
+							# denominator = len(nltk.trigrams(small_list_tokenized[item]))
+							denominator = denominator_tri
+						temporary_list.append(str(float(count)/denominator))
+					
+					# if key in small_list_tokenized[item] and key != 'tweets_here01':
+					# 	temp_join = " ".join(small_list_tokenized[item])
+
+					# 	count=0
+					# 	match=re.compile(key)
+					# 	count+=len(match.findall(temp_join))
+					# 	dict_happy[key].append(float(count)/len(small_list_tokenized[item]))
+					# 	temporary_list.append(str(float(count)/len(small_list_tokenized[item])))
+					# elif re.compile(key) in nltk.bigrams(small_list_tokenized[item]):
+					# 	print key
+					# 	raw_input("Bi Gram Match")
+
+					# 	count = 0
+					# 	match = re.compile(key) 
+					# 	for bigram_temp_here in nltk.bigrams(small_list_tokenized[item]):
+					# 		if match == bigram_temp_here:
+					# 			count+=1
+					# 	temporary_list.append(str(float(count)/len(nltk.bigrams(small_list_tokenized[item]))))
 					else:
-						dict_happy[key].append(0)
+						# dict_happy[key].append(0)
 						temporary_list.append('0')
-					temp_string = "\t".join(temporary_list)
+				temp_string = "\t".join(temporary_list)
 				# writer.writerow(self.data_happy[item] + '\t' + temp_string + '\n')
-				outfile.write((self.data_happy[item]).strip() + '\t' + temp_string + '\n')
+				# outfile.write((self.data_happy[item]).strip() + '\t' + temp_string + '\n')
+				outfile.write((self.data_sad[item]).strip() + '\t' + temp_string + '\n')
 
 				# for unigram in small_list_tokenized[item]:
 				# 	if unigram in dict_happy.keys():
@@ -387,6 +418,8 @@ if __name__ == '__main__':
 	part1Obj = assignment2_Part1()
 	part1Obj.tokenizeDocument()
 	#part1Obj.findLiwcFrequencies()
-	part1Obj.nGram('threshold_50',500)
+	part1Obj.nGram('sad_t500.tsv',500)
+	part1Obj.nGram('sad_t50.tsv',50)
+	part1Obj.nGram('sad_t100.tsv',100)
 	# part1Obj.nGram()
 	
