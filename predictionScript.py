@@ -44,7 +44,7 @@ class assignment2_Part1:
 		if stopWordInstruction==True:
 			for item in happyTweetsTokenized:
 				temp = []
-				temp += (word for word in item if word.lower() not in stopwords_mine)
+				temp += (word.lower() for word in item if word.lower() not in stopwords_mine)
 				self.new_happyTweets_tokenized.append(temp)
 		else:
 			self.new_happyTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
@@ -72,7 +72,7 @@ class assignment2_Part1:
 		if stopWordInstruction==True:
 			for item in sadTweetsTokenized:
 				temp = []
-				temp += (word for word in item if word.lower() not in stopwords_mine)
+				temp += (word.lower() for word in item if word.lower() not in stopwords_mine)
 				self.new_sadTweets_tokenized.append(temp)
 		else:
 			self.new_sadTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
@@ -109,34 +109,55 @@ class assignment2_Part1:
 		liwc['sadness'] = self.LiwcOccurences('sadness')
 		liwc['swear'] = self.LiwcOccurences('swear')
 
+		print "REACHED HERE"
+		raw_input("Enter Please")
+
 		liwc_count = []
-		liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
+		# liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
 		counter = 0
 		count = 0
 		for item in liwc:
-			counter = 0
+			# counter = 0
+			print "switching"
 			for entry in enumerate(self.new_happyTweets_tokenized):
-				print entry
-				#liwc_count.append([self.data_happy[entry[0]]])
-				liwc_lex_count['tweets'].append(self.data_happy[entry[0]])
-				temp_tweet = (i.lower() for i in self.new_happyTweets_tokenized[entry[0]])
+				# print entry
+				liwc_count.append([self.data_happy[entry[0]]])
+				
+
+				# liwc_lex_count['tweets'].append(self.data_happy[entry[0]])
+				
+
+				# temp_tweet = (i.lower() for i in self.new_happyTweets_tokenized[entry[0]])
+				# print temp_tweet
+				# print self.new_happyTweets_tokenized[entry[0]]
+				#raw_input("Enter")
 				count = 0
-				for x in item:
+				for x in liwc[item]:
+					# print x
 					match = re.compile(x)
-					for index in temp_tweet:
-						if index==match:
-							count += 1
+					# print match
+					temp_here = " ".join(self.new_happyTweets_tokenized[entry[0]])
+					count+= len(match.findall(temp_here))	
+					# for index in self.new_happyTweets_tokenized[entry[0]]:
+					# 	if match == index:
+					# 		count += 1
+					# 		print "Count Incremented"
 				if len(self.new_happyTweets_tokenized[entry[0]]) !=0:
-					liwc_lex_count[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
-					# liwc_count[counter].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
-					counter+=1
+					# print count,
+					# print len(self.new_happyTweets_tokenized[entry[0]])
+					#raw_input("Enter")
+					# print entry
+					# liwc_lex_count[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					liwc_count[len(liwc_count)-1].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					# counter+=1
 
 		with open('tweet_sentiment_sad.csv', 'wb') as outfile:
 			writer = csv.writer(outfile, delimiter="\t")
 			# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
-			# writer.writerows(liwc_count)
-			writer.writerow(liwc_lex_count.keys())
-			writer.writerows(zip(*liwc_lex_count.values()))
+			writer.writerow(liwc.keys())
+			writer.writerows(liwc_count)
+			# writer.writerow(liwc_lex_count.keys())
+			# writer.writerows(zip(*liwc_lex_count.values()))
 
 
 
@@ -158,6 +179,20 @@ class assignment2_Part1:
   #       	new_happyTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
         # else:
         # 	new_happyTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
+    def gramCalculation(self):
+    	list_unigrams_happy = []
+    	list_bigrams_happy = []
+    	list_trigrams_happy = []
+    	#HAPPY POSTS
+    	for item in self.new_happyTweets_tokenized:
+
+
+
+
+    	#SAD POSTS
+    	list_unigrams_sad = []
+    	list_bigrams_sad = []
+    	list_trigrams_sad = []
               
             
 
