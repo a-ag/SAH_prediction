@@ -1,6 +1,7 @@
 from sklearn import svm
 import csv
 import copy
+import nltk
 from nltk.tokenize import TweetTokenizer
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
@@ -81,6 +82,89 @@ class assignment2_Part1:
 		# for item in self.new_sadTweets_tokenized:
 		# 	print item
 
+	def nGram(self,dunno=True,d=50,filename):
+		list_unigrams_happy = []
+		list_bigrams_happy = []
+		list_trigrams_happy = []
+    	#HAPPY POSTS
+    	# for item in self.new_happyTweets_tokenized:
+    	# 	pass
+		# print self.data_happy
+
+		# list_unigrams_happy = set([item for sublist in self.new_happyTweets_tokenized for item in sublist])
+
+		# print len(list_unigrams_happy)
+
+		combined_tweet_list_tokenized = [item for sublist in self.new_happyTweets_tokenized for item in sublist]
+		combined_tweet_list_tokenized.append(item for sublist in self.new_sadTweets_tokenized for item in sublist)
+
+		print len(combined_tweet_list_tokenized)
+		print combined_tweet_list_tokenized[0]
+		raw_input("Enter")
+
+		list_unigrams_dist = nltk.FreqDist(combined_tweet_list_tokenized)
+		print len(list_unigrams_dist)
+		print type(list_unigrams_dist)
+
+		list_unigrams_greaterThreshold = []
+		list_bigrams_greaterThreshold = []
+		list_trigrams_greaterThreshold = []
+
+		temp_values = list_unigrams_dist.values()
+		temp_values.sort()
+		counter = 0
+		for k,v in list_unigrams_dist.items():
+			# if counter<30:
+			# 	counter+=1
+			# 	print k,v
+			if v>d:
+				print k,v
+				list_unigrams_greaterThreshold.append(k)
+
+
+
+		list_bigrams = nltk.bigrams(combined_tweet_list_tokenized)
+		list_bigrams_dist = nltk.FreqDist(list_bigrams)
+
+		for k,v in list_bigrams_dist.items():
+			# if counter<30:
+			# 	counter+=1
+			# 	print k,v
+			if v>d:
+				print k,v
+				list_bigrams_greaterThreshold.append(k)
+
+		list_trigrams = nltk.trigrams(combined_tweet_list_tokenized)
+		list_trigrams_dist = nltk.FreqDist(list_trigrams)
+
+		for k,v in list_trigrams_dist.items():
+			# if counter<30:
+			# 	counter+=1
+			# 	print k,v
+			if v>d:
+				print k,v
+				list_trigrams_greaterThreshold.append(k)
+
+
+		print list_unigrams_greaterThreshold
+		print list_bigrams_greaterThreshold
+		print list_trigrams_greaterThreshold
+
+
+    
+
+
+
+		#SAD POSTS
+		list_unigrams_sad = []
+		list_bigrams_sad = []
+		list_trigrams_sad = []
+
+		# list_unigrams_sad = 
+
+    	
+
+
 	def LiwcOccurences(self,filename):
 		newFileName = 'Assignment_II/LIWC_lexicons/' + filename
 		temp = open(newFileName).read()
@@ -113,18 +197,18 @@ class assignment2_Part1:
 		raw_input("Enter Please")
 
 		liwc_count = []
-		# liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
+		liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
 		counter = 0
 		count = 0
 		for item in liwc:
 			# counter = 0
 			print "switching"
-			for entry in enumerate(self.new_happyTweets_tokenized):
+			for entry in enumerate(self.new_sadTweets_tokenized):
 				# print entry
-				liwc_count.append([self.data_happy[entry[0]]])
+				# liwc_count.append([self.data_happy[entry[0]]])
 				
 
-				# liwc_lex_count['tweets'].append(self.data_happy[entry[0]])
+				liwc_lex_count['tweets'].append(self.data_sad[entry[0]])
 				
 
 				# temp_tweet = (i.lower() for i in self.new_happyTweets_tokenized[entry[0]])
@@ -136,63 +220,45 @@ class assignment2_Part1:
 					# print x
 					match = re.compile(x)
 					# print match
-					temp_here = " ".join(self.new_happyTweets_tokenized[entry[0]])
+					temp_here = " ".join(self.new_sadTweets_tokenized[entry[0]])
 					count+= len(match.findall(temp_here))	
 					# for index in self.new_happyTweets_tokenized[entry[0]]:
 					# 	if match == index:
 					# 		count += 1
 					# 		print "Count Incremented"
-				if len(self.new_happyTweets_tokenized[entry[0]]) !=0:
+				if len(self.new_sadTweets_tokenized[entry[0]]) !=0:
 					# print count,
 					# print len(self.new_happyTweets_tokenized[entry[0]])
 					#raw_input("Enter")
 					# print entry
-					# liwc_lex_count[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
-					liwc_count[len(liwc_count)-1].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					liwc_lex_count[item].append(float(count)/len(self.new_sadTweets_tokenized[entry[0]]))
+					# liwc_count[len(liwc_count)-1].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
 					# counter+=1
 
 		with open('tweet_sentiment_sad.csv', 'wb') as outfile:
 			writer = csv.writer(outfile, delimiter="\t")
 			# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
-			writer.writerow(liwc.keys())
-			writer.writerows(liwc_count)
-			# writer.writerow(liwc_lex_count.keys())
-			# writer.writerows(zip(*liwc_lex_count.values()))
+			#writer.writerow(liwc.keys())
+			# writer.writerows(liwc_count)
+			writer.writerow(liwc_lex_count.keys())
+			writer.writerows(zip(*liwc_lex_count.values()))
+
+
+    
+    # def gramCalculation(self):
+    # 	list_unigrams_happy = []
+    # 	list_bigrams_happy = []
+    # 	list_trigrams_happy = []
+    # 	#HAPPY POSTS
+    # 	for item in self.new_happyTweets_tokenized:
+    # 		pass
 
 
 
-		# print liwc['positive_affect_list']
-
-
-
-
-
-
-		# if stopWordInstruction==True:
-		# 	pass
-		# 	for item in happyTweetsTokenized:
-		# 		temp = []
-		# 		temp += (word for word in item if word.lower() not in stopwords_mine)
-		# 		new_happyTweets_tokenized.append(temp)
-
-  #       else:
-  #       	new_happyTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
-        # else:
-        # 	new_happyTweets_tokenized=copy.deepcopy(happyTweetsTokenized)
-    def gramCalculation(self):
-    	list_unigrams_happy = []
-    	list_bigrams_happy = []
-    	list_trigrams_happy = []
-    	#HAPPY POSTS
-    	for item in self.new_happyTweets_tokenized:
-
-
-
-
-    	#SAD POSTS
-    	list_unigrams_sad = []
-    	list_bigrams_sad = []
-    	list_trigrams_sad = []
+    # 	#SAD POSTS
+    # 	list_unigrams_sad = []
+    # 	list_bigrams_sad = []
+    # 	list_trigrams_sad = []
               
             
 
@@ -202,5 +268,7 @@ class assignment2_Part1:
 if __name__ == '__main__':
 	part1Obj = assignment2_Part1()
 	part1Obj.tokenizeDocument()
-	part1Obj.findLiwcFrequencies()
+	#part1Obj.findLiwcFrequencies()
+	part1Obj.nGram(50,'threshold_50')
+	# part1Obj.nGram()
 	
