@@ -87,26 +87,58 @@ class assignment2_Part1:
 		temp = temp.split('\n')
 
 		liwc_temp = []
-		with open("{0}/{1}".format('LIWC_lexicons', input), "r") as openFile:
-			for line in openFile:
-				word = line.strip()
-				if "*" in word:
-					word = r"\b{0}\b".format(word.replace('*','.*?'))
-				lex_str = "(" + word + "|"
-		lex_str = lex_str[:-1] + ")"
-		liwc_temp.append(lex_str)
+		temp_word = 'a'
+		with open("{0}/{1}".format('Assignment_II/LIWC_lexicons/', filename), "r") as openFile:
+			for item in openFile:
+				entry = item.strip()
+				if "*" in entry:
+					entry = r"\b{0}\b".format(entry.replace('*','.*?'))
+				temp_word = "(" + entry + "|"
+		temp_word = temp_word[:-1] + ")"
+		liwc_temp.append(temp_word)
 
 
 		return temp
 
 	def findLiwcFrequencies(self):
 		liwc = {}
-		liwc['positive_affect_list'] = self.LiwcOccurences('positive_affect')
-		liwc['negative_affect_list'] = self.LiwcOccurences('negative_affect')
-		liwc['anger_list'] = self.LiwcOccurences('anger')
-		liwc['anxiety_list'] = self.LiwcOccurences('anxiety')
-		liwc['sadness_list'] = self.LiwcOccurences('sadness')
-		liwc['swear_list'] = self.LiwcOccurences('swear')
+		liwc['positive_affect'] = self.LiwcOccurences('positive_affect')
+		liwc['negative_affect'] = self.LiwcOccurences('negative_affect')
+		liwc['anger'] = self.LiwcOccurences('anger')
+		liwc['anxiety'] = self.LiwcOccurences('anxiety')
+		liwc['sadness'] = self.LiwcOccurences('sadness')
+		liwc['swear'] = self.LiwcOccurences('swear')
+
+		liwc_count = []
+		liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
+		counter = 0
+		count = 0
+		for item in liwc:
+			counter = 0
+			for entry in enumerate(self.new_happyTweets_tokenized):
+				print entry
+				#liwc_count.append([self.data_happy[entry[0]]])
+				liwc_lex_count['tweets'].append(self.data_happy[entry[0]])
+				temp_tweet = (i.lower() for i in self.new_happyTweets_tokenized[entry[0]])
+				count = 0
+				for x in item:
+					match = re.compile(x)
+					for index in temp_tweet:
+						if index==match:
+							count += 1
+				if len(self.new_happyTweets_tokenized[entry[0]]) !=0:
+					liwc_lex_count[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					# liwc_count[counter].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					counter+=1
+
+		with open('tweet_sentiment_sad.csv', 'wb') as outfile:
+			writer = csv.writer(outfile, delimiter="\t")
+			# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
+			# writer.writerows(liwc_count)
+			writer.writerow(liwc_lex_count.keys())
+			writer.writerows(zip(*liwc_lex_count.values()))
+
+
 
 		# print liwc['positive_affect_list']
 
