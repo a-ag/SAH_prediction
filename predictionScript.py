@@ -6,6 +6,7 @@ from nltk.tokenize import TweetTokenizer
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 import re
+import string
 
 class assignment2_Part1:
 	def __init__(self):
@@ -82,10 +83,10 @@ class assignment2_Part1:
 		# for item in self.new_sadTweets_tokenized:
 		# 	print item
 
-	def nGram(self,dunno=True,d=50,filename):
+	def nGram(self,filename,d=500):
 		list_unigrams_happy = []
-		list_bigrams_happy = []
-		list_trigrams_happy = []
+		list_bigrams = []
+		list_trigrams = []
     	#HAPPY POSTS
     	# for item in self.new_happyTweets_tokenized:
     	# 	pass
@@ -98,20 +99,20 @@ class assignment2_Part1:
 		combined_tweet_list_tokenized = [item for sublist in self.new_happyTweets_tokenized for item in sublist]
 		combined_tweet_list_tokenized.append(item for sublist in self.new_sadTweets_tokenized for item in sublist)
 
-		print len(combined_tweet_list_tokenized)
-		print combined_tweet_list_tokenized[0]
-		raw_input("Enter")
+		# print len(combined_tweet_list_tokenized)
+		# print combined_tweet_list_tokenized[0]
+		# raw_input("Enter")
 
 		list_unigrams_dist = nltk.FreqDist(combined_tweet_list_tokenized)
-		print len(list_unigrams_dist)
-		print type(list_unigrams_dist)
+		# print len(list_unigrams_dist)
+		# print type(list_unigrams_dist)
 
 		list_unigrams_greaterThreshold = []
 		list_bigrams_greaterThreshold = []
 		list_trigrams_greaterThreshold = []
 
-		temp_values = list_unigrams_dist.values()
-		temp_values.sort()
+		# temp_values = list_unigrams_dist.values()
+		# temp_values.sort()
 		counter = 0
 		for k,v in list_unigrams_dist.items():
 			# if counter<30:
@@ -121,9 +122,21 @@ class assignment2_Part1:
 				print k,v
 				list_unigrams_greaterThreshold.append(k)
 
+		for item in self.new_happyTweets_tokenized:
+			temp_bigrams = nltk.bigrams(item)
+			for i in temp_bigrams:
+				list_bigrams.append(i)
+		for item in self.new_sadTweets_tokenized:
+			temp_bigrams=nltk.bigrams(item)
+			for i in temp_bigrams:
+				list_bigrams.append(i)
 
 
-		list_bigrams = nltk.bigrams(combined_tweet_list_tokenized)
+
+		# list_bigrams = nltk.bigrams(combined_tweet_list_tokenized)
+		# print type(list_bigrams)
+		# print list_bigrams
+		# raw_input("Hey There")
 		list_bigrams_dist = nltk.FreqDist(list_bigrams)
 
 		for k,v in list_bigrams_dist.items():
@@ -134,7 +147,17 @@ class assignment2_Part1:
 				print k,v
 				list_bigrams_greaterThreshold.append(k)
 
-		list_trigrams = nltk.trigrams(combined_tweet_list_tokenized)
+		for item in self.new_happyTweets_tokenized:
+			temp_trigrams = nltk.trigrams(item)
+			for i in temp_trigrams:
+				list_trigrams.append(i)
+		for item in self.new_sadTweets_tokenized:
+			temp_trigrams=nltk.trigrams(item)
+			for i in temp_trigrams:
+				list_trigrams.append(i)
+		# list_trigrams = nltk.trigrams(combined_tweet_list_tokenized)
+
+
 		list_trigrams_dist = nltk.FreqDist(list_trigrams)
 
 		for k,v in list_trigrams_dist.items():
@@ -150,19 +173,113 @@ class assignment2_Part1:
 		print list_bigrams_greaterThreshold
 		print list_trigrams_greaterThreshold
 
+		# raw_input("Please Wait")
 
-    
+		list_ngrams = []
+		# list_ngrams.append(item for item in list_unigrams_greaterThreshold)
+		# list_ngrams.append(item for item in list_bigrams_greaterThreshold )
+		# list_ngrams.append(item for item in list_trigrams_greaterThreshold )
+
+		for i in list_unigrams_greaterThreshold:
+			list_ngrams.append(i)
+		for i in list_bigrams_greaterThreshold:
+			list_ngrams.append(i)
+		for i in list_trigrams_greaterThreshold:
+			list_ngrams.append(i)
+
+		print len(list_ngrams)
 
 
+		print list_ngrams
+		# raw_input("Lets see")
 
-		#SAD POSTS
-		list_unigrams_sad = []
-		list_bigrams_sad = []
-		list_trigrams_sad = []
+		dict_happy = {'tweets_here01':[]}
 
-		# list_unigrams_sad = 
+		for item in list_ngrams:
+			dict_happy[str(item)] = []
 
-    	
+		small_list_tokenized = self.new_happyTweets_tokenized[:5]
+
+		print len(small_list_tokenized)
+		print small_list_tokenized
+
+		with open('temp_file.tsv', 'w') as outfile:
+			# writer = csv.writer(outfile, delimiter="\t")
+			for item in range(0,len(small_list_tokenized)):
+				# dict_happy['tweets_here01'].append(self.data_happy[item])
+				ngram_currentTweet = []
+				for i in small_list_tokenized[item]:
+					ngram_currentTweet.append(i)
+				bigram_currentTweet = nltk.bigrams(small_list_tokenized[item])
+				for i in bigram_currentTweet:
+					ngram_currentTweet.append(i)
+				trigram_currentTweet = nltk.trigrams(small_list_tokenized[item])
+				for i in trigram_currentTweet:
+					ngram_currentTweet.append(i)
+				temporary_list = []
+				for key in list_ngrams:
+					
+					if key in small_list_tokenized[item] and key != 'tweets_here01':
+						temp_join = " ".join(small_list_tokenized[item])
+
+						count=0
+						match=re.compile(key)
+						count+=len(match.findall(temp_join))
+						dict_happy[key].append(float(count)/len(small_list_tokenized[item]))
+						temporary_list.append(str(float(count)/len(small_list_tokenized[item])))
+					elif re.compile(key) in nltk.bigrams(small_list_tokenized[item]):
+						print key
+						raw_input("Bi Gram Match")
+
+						count = 0
+						match = re.compile(key) 
+						for bigram_temp_here in nltk.bigrams(small_list_tokenized[item]):
+							if match == bigram_temp_here:
+								count+=1
+						temporary_list.append(str(float(count)/len(nltk.bigrams(small_list_tokenized[item]))))
+					else:
+						dict_happy[key].append(0)
+						temporary_list.append('0')
+					temp_string = "\t".join(temporary_list)
+				# writer.writerow(self.data_happy[item] + '\t' + temp_string + '\n')
+				outfile.write((self.data_happy[item]).strip() + '\t' + temp_string + '\n')
+
+				# for unigram in small_list_tokenized[item]:
+				# 	if unigram in dict_happy.keys():
+				# 		print unigram
+				# 		# raw_input("Enter Here Please")
+				# 		temp_join = " ".join(small_list_tokenized[item])
+				# 		count=0
+				# 		match=re.compile(unigram)
+				# 		count+=len(match.findall(temp_join))
+				# 		dict_happy[str(unigram)].append(float(count)/len(small_list_tokenized[item]))
+			# bigram_here = nltk.bigrams(small_list_tokenized[item])
+			# for bigram_iterator in bigram_here:
+			# 	if bigram_iterator in dict_happy.keys():
+			# 		temp_join = " ".join(small_list_tokenized[item])
+			# 		count=0
+			# 		count+=len(bigram_iterator.findall(temp_join))
+			# 		dict_happy[str(bigram_iterator)].append(float(count)/len(small_list_tokenized[item]))
+			# trigram_here = nltk.trigrams(small_list_tokenized[item])
+			# for trigram_iterator in trigram_here:
+			# 	if trigram_iterator in dict_happy.keys():
+			# 		temp_join = " ".join(small_list_tokenized[item])
+			# 		count=0
+			# 		count+=len(trigram_iterator.findall(temp_join))
+			# 		dict_happy[str(trigram_iterator)].append(float(count)/len(small_list_tokenized[item]))
+		print "##################"
+		for item in dict_happy:
+			print item
+			print dict_happy[item]
+		print "##################"
+
+		# with open('temp_file.csv', 'wb') as outfile:
+		# 	writer = csv.writer(outfile, delimiter="\t")
+		# 	# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
+		# 	#writer.writerow(liwc.keys())
+		# 	# writer.writerows(liwc_count)
+		# 	writer.writerow(dict_happy.keys())
+		# 	writer.writerows(zip(*dict_happy.values()))	
 
 
 	def LiwcOccurences(self,filename):
@@ -235,13 +352,14 @@ class assignment2_Part1:
 					# liwc_count[len(liwc_count)-1].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
 					# counter+=1
 
+		
 		with open('tweet_sentiment_sad.csv', 'wb') as outfile:
-			writer = csv.writer(outfile, delimiter="\t")
-			# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
-			#writer.writerow(liwc.keys())
-			# writer.writerows(liwc_count)
-			writer.writerow(liwc_lex_count.keys())
-			writer.writerows(zip(*liwc_lex_count.values()))
+				writer = csv.writer(outfile, delimiter="\t")
+				# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
+				#writer.writerow(liwc.keys())
+				# writer.writerows(liwc_count)
+				writer.writerow(liwc_lex_count.keys())
+				writer.writerows(zip(*liwc_lex_count.values()))
 
 
     
@@ -269,6 +387,6 @@ if __name__ == '__main__':
 	part1Obj = assignment2_Part1()
 	part1Obj.tokenizeDocument()
 	#part1Obj.findLiwcFrequencies()
-	part1Obj.nGram(50,'threshold_50')
+	part1Obj.nGram('threshold_50',500)
 	# part1Obj.nGram()
 	
