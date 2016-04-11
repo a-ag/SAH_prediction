@@ -89,6 +89,11 @@ class assignment2_Part1:
 		# for item in self.new_sadTweets_tokenized:
 		# 	print item
 
+	def classifierPrediction(self,filename):
+		pass
+
+
+
 	def nGram(self,filename,d=500):
 		list_unigrams_happy = []
 		list_bigrams = []
@@ -384,7 +389,7 @@ class assignment2_Part1:
 					# counter+=1
 
 		
-		with open('tweet_sentiment_sad.csv', 'wb') as outfile:
+		with open('tweet_sentiment_sad_RT_removed.csv', 'wb') as outfile:
 				writer = csv.writer(outfile, delimiter="\t")
 				# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
 				#writer.writerow(liwc.keys())
@@ -417,9 +422,11 @@ class assignment2_Part1:
 if __name__ == '__main__':
 	part1Obj = assignment2_Part1()
 	part1Obj.tokenizeDocument()
-	#part1Obj.findLiwcFrequencies()
-	part1Obj.nGram('sad_t500.tsv',500)
-	part1Obj.nGram('sad_t50.tsv',50)
-	part1Obj.nGram('sad_t100.tsv',100)
+	part1Obj.findLiwcFrequencies()
+	#part1Obj.nGram('sad_t500.tsv',500)
+	#part1Obj.nGram('sad_t50.tsv',50)
+	#part1Obj.nGram('sad_t100.tsv',100)
+
+
 	# part1Obj.nGram()
 	
