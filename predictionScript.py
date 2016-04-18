@@ -44,7 +44,7 @@ class assignment2_Part1:
 		print len(self.data_happy)
 		print len(self.data_sad)
 		# raw_input("dilns")
-
+	
 	def tokenizeDocument(self,stopWordInstruction=True):
 		tweetTokenizerInitialization = TweetTokenizer(strip_handles = True, reduce_len=True)
 		regExpTokenizer = RegexpTokenizer(r'\w+')
