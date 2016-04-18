@@ -12,6 +12,8 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.cross_validation import train_test_split
 from sklearn import svm
 from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import GaussianNB
 
 class assignment2_Part1:
 	def __init__(self):
@@ -126,6 +128,7 @@ class assignment2_Part1:
 
 		y=df_affect['output']
 		sum=0
+		sum_naive = 0
 		for x in range(0,5):
 
 			X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
@@ -135,11 +138,17 @@ class assignment2_Part1:
 			clf.fit(X_train,y_train)
 			prediction = clf.predict(X_test)
 
-			sum+=clf.score(X_test,y_test)
-			print clf.score(X_test,y_test)
+			# clf_naive = MultinomialNB()
+			clf_naive = GaussianNB()
+			clf_naive.fit(X_train,y_train)
+			sum_naive += clf_naive.score(X_test,y_test)
+			print clf_naive.score(X_test,y_test)
 
-		print sum
-		print sum/5
+			# sum+=clf.score(X_test,y_test)
+			# print clf.score(X_test,y_test)
+
+		print sum_naive
+		print sum_naive/5
 
 
 
