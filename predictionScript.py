@@ -16,6 +16,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
+from sklearn.metrics import precision_recall_fscore_support
 
 class assignment2_Part1:
 	def __init__(self):
@@ -98,9 +99,9 @@ class assignment2_Part1:
 		# for item in self.new_sadTweets_tokenized:
 		# 	print item
 
-	def classifierDataAffect(self,filename):
+	def classifierDataAffect(self):
 		#for affect files
-		df_sad_tweets = pd.read_csv(filename,sep='\t')
+		df_sad_tweets = pd.read_csv('tweet_sentiment_sad_RT_removed.csv',sep='\t')
 		df_sad_tweets['output'] = 0
 		df_new_sad_tweets = df_sad_tweets.ix[:,0:6]
 		print df_new_sad_tweets.ix[1:10]
@@ -129,46 +130,103 @@ class assignment2_Part1:
 		print npAffect[0:10,-1]
 
 		y=df_affect['output']
-		sum=0
-		sum_naive = 0
-		sum_knn = 0
-		for x in range(0,5):
+		# sum=0
+		# sum_naive = 0
+		# sum_knn = 0
+		# for x in range(0,5):
+        #
+		X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
+		# 	# print "traingin"
+		# 	# print X_train
+		# 	clf=svm.SVC()
+		# 	clf.fit(X_train,y_train)
+		# 	prediction = clf.predict(X_test)
+        #
+		# 	clf_naive = MultinomialNB()
+		# 	# clf_naive = GaussianNB()
+		# 	clf_naive.fit(X_train,y_train)
+		# 	sum_naive += clf_naive.score(X_test,y_test)
+		# 	print "naive bayes",
+		# 	print clf_naive.score(X_test,y_test)
+        #
+		# 	neigh = KNeighborsClassifier(n_neighbors=1000)
+		# 	neigh.fit(X_train, y_train)
+		# 	print "knn",
+		# 	print neigh.score(X_test,y_test)
+		# 	sum_knn+=neigh.score(X_test,y_test)
+        #
+        #
+		# 	sum+=clf.score(X_test,y_test)
+		# 	print "svm",
+		# 	print clf.score(X_test,y_test)
+        #
+		# print "final knn",
+		# print sum_knn/5.0
+		# print "final naive",
+		# print sum_naive/5.0
+		# print "final svm",
+		# print sum/5.0
 
-			X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
-			# print "traingin"
-			# print X_train
-			clf=svm.SVC()
-			clf.fit(X_train,y_train)
-			prediction = clf.predict(X_test)
+		clf=svm.SVC()
+		clf.fit(X_train,y_train)
+		# prediction = clf.predict(X_test)
 
-			clf_naive = MultinomialNB()
-			# clf_naive = GaussianNB()
-			clf_naive.fit(X_train,y_train)
-			sum_naive += clf_naive.score(X_test,y_test)
-			print "naive bayes",
-			print clf_naive.score(X_test,y_test)
+		clf_naive = MultinomialNB()
+		# clf_naive = GaussianNB()
+		clf_naive.fit(X_train,y_train)
+		# sum_naive += clf_naive.score(X_test,y_test)
+		print "naive bayes",
+		print clf_naive.score(X_test,y_test),
+		y_pred_naive = clf_naive.predict(X_test)
+		scores_naive = precision_recall_fscore_support(y_test, y_pred_naive, average='binary')
+		print scores_naive
 
-			neigh = KNeighborsClassifier(n_neighbors=1000)
-			neigh.fit(X_train, y_train)
-			print "knn",
-			print neigh.score(X_test,y_test)
-			sum_knn+=neigh.score(X_test,y_test)
+		neigh = KNeighborsClassifier(n_neighbors=1)
+		neigh.fit(X_train, y_train)
+		print "knn-1",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=10)
+		neigh.fit(X_train, y_train)
+		print "knn-10",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=100)
+		neigh.fit(X_train, y_train)
+		print "knn-100",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=1000)
+		neigh.fit(X_train, y_train)
+		print "knn-1000",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		# sum_knn+=neigh.score(X_test,y_test)
 
 
-			sum+=clf.score(X_test,y_test)
-			print "svm",
-			print clf.score(X_test,y_test)
+		# sum+=clf.score(X_test,y_test)
+		print "svm",
+		print clf.score(X_test,y_test)
+		y_pred_svm = clf.predict(X_test)
+		scores_svm = precision_recall_fscore_support(y_test, y_pred_svm, average='binary')
+		print scores_svm
 
-		print "final knn",
-		print sum_knn/5.0
-		print "final naive",
-		print sum_naive/5.0
-		print "final svm",
-		print sum/5.0
 
 	def classifierDataNGram(self):
 		#for affect files
-		df_sad_tweets = pd.read_csv('sad_t100.tsv',sep='\t',header=None)
+		df_sad_tweets = pd.read_csv('sad_t50.tsv',sep='\t',header=None)
 
 		print df_sad_tweets.ix[0:10,1:]
 
@@ -181,7 +239,7 @@ class assignment2_Part1:
 		nuArr = df_new_sad_tweets.as_matrix()
 		print np.any(np.isfinite(nuArr))
 
-		raw_input("Hi")
+		# raw_input("Hi")
 
 
 		print df_new_sad_tweets.ix[1:10]
@@ -191,7 +249,7 @@ class assignment2_Part1:
 		print df_new_sad_tweets.ix[1:10]
 		# print df_sad_tweets.ix[1:10,0:7]
 
-		df_happy_tweets = pd.read_csv('happy_t100.tsv',sep='\t',header=None)
+		df_happy_tweets = pd.read_csv('happy_t50.tsv',sep='\t',header=None)
 		# print df_happy_tweets.columns.values
 		# print df_happy_tweets.ix[3:10,0:6]
 		df_new_happy_tweets = df_happy_tweets.ix[:,1:]
@@ -200,7 +258,7 @@ class assignment2_Part1:
 		nuArrHappy = df_new_happy_tweets.as_matrix()
 		print np.any(np.isfinite(nuArrHappy))
 
-		raw_input("Hi")
+		# raw_input("Hi")
 
 		print df_new_happy_tweets.ix[0:10]
 
@@ -219,39 +277,73 @@ class assignment2_Part1:
 		sum=0
 		sum_naive = 0
 		sum_knn = 0
-		for x in range(0,5):
+		# for x in range(0,5):
 
-			X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
-			# print "traingin"
-			# print X_train
-			clf=svm.SVC()
-			clf.fit(X_train,y_train)
-			prediction = clf.predict(X_test)
+		X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.3)
+		# print "traingin"
+		# print X_train
+		clf=svm.SVC()
+		clf.fit(X_train,y_train)
+		# prediction = clf.predict(X_test)
 
-			clf_naive = MultinomialNB()
-			# clf_naive = GaussianNB()
-			clf_naive.fit(X_train,y_train)
-			sum_naive += clf_naive.score(X_test,y_test)
-			print "naive bayes",
-			print clf_naive.score(X_test,y_test)
+		clf_naive = MultinomialNB()
+		# clf_naive = GaussianNB()
+		clf_naive.fit(X_train,y_train)
+		# sum_naive += clf_naive.score(X_test,y_test)
+		print "naive bayes",
+		print clf_naive.score(X_test,y_test),
+		y_pred_naive = clf_naive.predict(X_test)
+		scores_naive = precision_recall_fscore_support(y_test, y_pred_naive, average='binary')
+		print scores_naive
 
-			neigh = KNeighborsClassifier(n_neighbors=1000)
-			neigh.fit(X_train, y_train)
-			print "knn",
-			print neigh.score(X_test,y_test)
-			sum_knn+=neigh.score(X_test,y_test)
+		neigh = KNeighborsClassifier(n_neighbors=1)
+		neigh.fit(X_train, y_train)
+		print "knn-1",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=10)
+		neigh.fit(X_train, y_train)
+		print "knn-10",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=100)
+		neigh.fit(X_train, y_train)
+		print "knn-100",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		neigh = KNeighborsClassifier(n_neighbors=1000)
+		neigh.fit(X_train, y_train)
+		print "knn-1000",
+		print neigh.score(X_test,y_test)
+		y_pred_knn = neigh.predict(X_test)
+		scores_knn = precision_recall_fscore_support(y_test, y_pred_knn, average='binary')
+		print scores_knn
+
+		# sum_knn+=neigh.score(X_test,y_test)
 
 
-			sum+=clf.score(X_test,y_test)
-			print "svm",
-			print clf.score(X_test,y_test)
+		# sum+=clf.score(X_test,y_test)
+		print "svm",
+		print clf.score(X_test,y_test)
+		y_pred_svm = clf.predict(X_test)
+		scores_svm = precision_recall_fscore_support(y_test, y_pred_svm, average='binary')
+		print scores_svm
 
-		print "final knn",
-		print sum_knn/5.0
-		print "final naive",
-		print sum_naive/5.0
-		print "final svm",
-		print sum/5.0
+		# print "final knn",
+		# print sum_knn/5.0
+		# print "final naive",
+		# print sum_naive/5.0
+		# print "final svm",
+		# print sum/5.0
 
 
 
@@ -605,7 +697,7 @@ if __name__ == '__main__':
 	#part1Obj.nGram('sad_t50.tsv',50)
 	#part1Obj.nGram('sad_t100.tsv',100)
 
-	# part1Obj.classifierDataAffect('tweet_sentiment_sad_RT_removed.csv')
+	# part1Obj.classifierDataAffect()
 	part1Obj.classifierDataNGram()
 
 	# part1Obj.nGram()
