@@ -41,6 +41,10 @@ class assignment2_Part1:
 				continue
 			self.data_sad.append(result)
 
+		print len(self.data_happy)
+		print len(self.data_sad)
+		# raw_input("dilns")
+
 	def tokenizeDocument(self,stopWordInstruction=True):
 		tweetTokenizerInitialization = TweetTokenizer(strip_handles = True, reduce_len=True)
 		regExpTokenizer = RegexpTokenizer(r'\w+')
@@ -675,27 +679,6 @@ class assignment2_Part1:
 				writer.writerows(zip(*final_dict.values()))
 
 
-    
-    # def gramCalculation(self):
-    # 	list_unigrams_happy = []
-    # 	list_bigrams_happy = []
-    # 	list_trigrams_happy = []
-    # 	#HAPPY POSTS
-    # 	for item in self.new_happyTweets_tokenized:
-    # 		pass
-
-
-
-    # 	#SAD POSTS
-    # 	list_unigrams_sad = []
-    # 	list_bigrams_sad = []
-    # 	list_trigrams_sad = []
-              
-            
-
-        
-
-
 if __name__ == '__main__':
 	part1Obj = assignment2_Part1()
 	# part1Obj.tokenizeDocument()
@@ -704,8 +687,8 @@ if __name__ == '__main__':
 	#part1Obj.nGram('sad_t50.tsv',50)
 	#part1Obj.nGram('sad_t100.tsv',100)
 
-	part1Obj.classifierDataAffect()
-	# part1Obj.classifierDataNGram()
+	# part1Obj.classifierDataAffect()
+	part1Obj.classifierDataNGram()
 
 	# part1Obj.nGram()
 	
