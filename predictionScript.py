@@ -14,6 +14,8 @@ from sklearn import svm
 from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
 
 class assignment2_Part1:
 	def __init__(self):
@@ -96,7 +98,7 @@ class assignment2_Part1:
 		# for item in self.new_sadTweets_tokenized:
 		# 	print item
 
-	def classifierData(self,filename):
+	def classifierDataAffect(self,filename):
 		#for affect files
 		df_sad_tweets = pd.read_csv(filename,sep='\t')
 		df_sad_tweets['output'] = 0
@@ -129,6 +131,7 @@ class assignment2_Part1:
 		y=df_affect['output']
 		sum=0
 		sum_naive = 0
+		sum_knn = 0
 		for x in range(0,5):
 
 			X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
@@ -138,17 +141,119 @@ class assignment2_Part1:
 			clf.fit(X_train,y_train)
 			prediction = clf.predict(X_test)
 
-			# clf_naive = MultinomialNB()
-			clf_naive = GaussianNB()
+			clf_naive = MultinomialNB()
+			# clf_naive = GaussianNB()
 			clf_naive.fit(X_train,y_train)
 			sum_naive += clf_naive.score(X_test,y_test)
+			print "naive bayes",
 			print clf_naive.score(X_test,y_test)
 
-			# sum+=clf.score(X_test,y_test)
-			# print clf.score(X_test,y_test)
+			neigh = KNeighborsClassifier(n_neighbors=1000)
+			neigh.fit(X_train, y_train)
+			print "knn",
+			print neigh.score(X_test,y_test)
+			sum_knn+=neigh.score(X_test,y_test)
 
-		print sum_naive
-		print sum_naive/5
+
+			sum+=clf.score(X_test,y_test)
+			print "svm",
+			print clf.score(X_test,y_test)
+
+		print "final knn",
+		print sum_knn/5.0
+		print "final naive",
+		print sum_naive/5.0
+		print "final svm",
+		print sum/5.0
+
+	def classifierDataNGram(self):
+		#for affect files
+		df_sad_tweets = pd.read_csv('sad_t100.tsv',sep='\t',header=None)
+
+		print df_sad_tweets.ix[0:10,1:]
+
+		print len(df_sad_tweets.columns.values)
+		print df_sad_tweets.shape
+
+		print pd.notnull(df_sad_tweets)
+		df_sad_tweets['output'] = 0
+		df_new_sad_tweets = df_sad_tweets.ix[:,1:]
+		nuArr = df_new_sad_tweets.as_matrix()
+		print np.any(np.isfinite(nuArr))
+
+		raw_input("Hi")
+
+
+		print df_new_sad_tweets.ix[1:10]
+		print df_new_sad_tweets.columns.values
+		df_new_sad_tweets['output']=0
+		print df_new_sad_tweets.columns.values
+		print df_new_sad_tweets.ix[1:10]
+		# print df_sad_tweets.ix[1:10,0:7]
+
+		df_happy_tweets = pd.read_csv('happy_t100.tsv',sep='\t',header=None)
+		# print df_happy_tweets.columns.values
+		# print df_happy_tweets.ix[3:10,0:6]
+		df_new_happy_tweets = df_happy_tweets.ix[:,1:]
+		df_new_happy_tweets['output']=1
+
+		nuArrHappy = df_new_happy_tweets.as_matrix()
+		print np.any(np.isfinite(nuArrHappy))
+
+		raw_input("Hi")
+
+		print df_new_happy_tweets.ix[0:10]
+
+		df_affect = pd.concat([df_new_happy_tweets,df_new_sad_tweets],ignore_index=True)
+
+
+		print df_affect.ix[0:10]
+		print len(df_new_happy_tweets)
+		print len(df_new_sad_tweets)
+		print len(df_affect)
+
+		npAffect = df_affect.as_matrix()
+		print npAffect[0:10,-1]
+
+		y=df_affect['output']
+		sum=0
+		sum_naive = 0
+		sum_knn = 0
+		for x in range(0,5):
+
+			X_train,X_test,y_train,y_test = train_test_split(df_affect.ix[:,0:6],y,test_size=0.2)
+			# print "traingin"
+			# print X_train
+			clf=svm.SVC()
+			clf.fit(X_train,y_train)
+			prediction = clf.predict(X_test)
+
+			clf_naive = MultinomialNB()
+			# clf_naive = GaussianNB()
+			clf_naive.fit(X_train,y_train)
+			sum_naive += clf_naive.score(X_test,y_test)
+			print "naive bayes",
+			print clf_naive.score(X_test,y_test)
+
+			neigh = KNeighborsClassifier(n_neighbors=1000)
+			neigh.fit(X_train, y_train)
+			print "knn",
+			print neigh.score(X_test,y_test)
+			sum_knn+=neigh.score(X_test,y_test)
+
+
+			sum+=clf.score(X_test,y_test)
+			print "svm",
+			print clf.score(X_test,y_test)
+
+		print "final knn",
+		print sum_knn/5.0
+		print "final naive",
+		print sum_naive/5.0
+		print "final svm",
+		print sum/5.0
+
+
 
 
 
@@ -500,8 +605,8 @@ if __name__ == '__main__':
 	#part1Obj.nGram('sad_t50.tsv',50)
 	#part1Obj.nGram('sad_t100.tsv',100)
 
-	part1Obj.classifierData('tweet_sentiment_sad_RT_removed.csv')
-
+	# part1Obj.classifierDataAffect('tweet_sentiment_sad_RT_removed.csv')
+	part1Obj.classifierDataNGram()
 
 	# part1Obj.nGram()
 	
