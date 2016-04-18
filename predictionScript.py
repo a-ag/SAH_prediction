@@ -576,9 +576,9 @@ class assignment2_Part1:
 		# 	writer.writerows(zip(*dict_happy.values()))	
 
 
-	def LiwcOccurences(self,filename):
-		newFileName = 'Assignment_II/LIWC_lexicons/' + filename
-		temp = open(newFileName).read()
+	def changeLIWC(self,filename):
+		finalFile = 'Assignment_II/LIWC_lexicons/' + filename
+		temp = open(finalFile).read()
 		temp = temp.split('\n')
 
 		liwc_temp = []
@@ -596,22 +596,28 @@ class assignment2_Part1:
 		return temp
 
 	def findLiwcFrequencies(self):
-		liwc = {}
-		liwc['positive_affect'] = self.LiwcOccurences('positive_affect')
-		liwc['negative_affect'] = self.LiwcOccurences('negative_affect')
-		liwc['anger'] = self.LiwcOccurences('anger')
-		liwc['anxiety'] = self.LiwcOccurences('anxiety')
-		liwc['sadness'] = self.LiwcOccurences('sadness')
-		liwc['swear'] = self.LiwcOccurences('swear')
+		dict_affect = {}
+		dict_affect['positive_affect'] = self.changeLIWC('positive_affect')
+		dict_affect['negative_affect'] = self.changeLIWC('negative_affect')
+		dict_affect['anger'] = self.changeLIWC('anger')
+		dict_affect['anxiety'] = self.changeLIWC('anxiety')
+		dict_affect['sadness'] = self.changeLIWC('sadness')
+		dict_affect['swear'] = self.changeLIWC('swear')
 
 		print "REACHED HERE"
-		raw_input("Enter Please")
+		# raw_input("Enter Please")
 
 		liwc_count = []
-		liwc_lex_count = {'tweets':[], 'negative_affect':[], 'anxiety': [], 'sadness': [], 'swear': [], 'positive_affect': [], 'anger': []}
+		final_dict = {'tweets':[],
+					  'negative_affect':[],
+					  'anxiety': [],
+					  'sadness': [],
+					  'swear': [],
+					  'positive_affect': [],
+					  'anger': []}
 		counter = 0
 		count = 0
-		for item in liwc:
+		for item in dict_affect:
 			# counter = 0
 			print "switching"
 			# for entry in enumerate(self.new_sadTweets_tokenized):
@@ -620,8 +626,8 @@ class assignment2_Part1:
 				# liwc_count.append([self.data_happy[entry[0]]])
 				
 
-				# liwc_lex_count['tweets'].append(self.data_sad[entry[0]])
-				liwc_lex_count['tweets'].append(self.data_happy[entry[0]])
+				# final_dict['tweets'].append(self.data_sad[entry[0]])
+				final_dict['tweets'].append(self.data_happy[entry[0]])
 				
 
 				# temp_tweet = (i.lower() for i in self.new_happyTweets_tokenized[entry[0]])
@@ -629,7 +635,7 @@ class assignment2_Part1:
 				# print self.new_happyTweets_tokenized[entry[0]]
 				#raw_input("Enter")
 				count = 0
-				for x in liwc[item]:
+				for x in dict_affect[item]:
 					# print x
 					match = re.compile(x)
 					# print match
@@ -652,8 +658,8 @@ class assignment2_Part1:
 					# print entry
 					
 
-					# liwc_lex_count[item].append(float(count)/len(self.new_sadTweets_tokenized[entry[0]]))
-					liwc_lex_count[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
+					# final_dict[item].append(float(count)/len(self.new_sadTweets_tokenized[entry[0]]))
+					final_dict[item].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
 					
 
 					# liwc_count[len(liwc_count)-1].append(float(count)/len(self.new_happyTweets_tokenized[entry[0]]))
@@ -663,10 +669,10 @@ class assignment2_Part1:
 		with open('tweet_sentiment_happy_RT_removed.csv', 'wb') as outfile:
 				writer = csv.writer(outfile, delimiter="\t")
 				# writer.writerow(['tweet','positive_affect','negative_affect','anger','anxiety','sadness','swear'])
-				#writer.writerow(liwc.keys())
+				#writer.writerow(dict_affect.keys())
 				# writer.writerows(liwc_count)
-				writer.writerow(liwc_lex_count.keys())
-				writer.writerows(zip(*liwc_lex_count.values()))
+				writer.writerow(final_dict.keys())
+				writer.writerows(zip(*final_dict.values()))
 
 
     
