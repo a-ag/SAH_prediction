@@ -17,6 +17,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support
+from sklearn.naive_bayes import BernoulliNB
 
 class assignment2_Part1:
 	def __init__(self):
@@ -171,7 +172,7 @@ class assignment2_Part1:
 		clf.fit(X_train,y_train)
 		# prediction = clf.predict(X_test)
 
-		clf_naive = MultinomialNB()
+		clf_naive = BernoulliNB()
 		# clf_naive = GaussianNB()
 		clf_naive.fit(X_train,y_train)
 		# sum_naive += clf_naive.score(X_test,y_test)
@@ -286,7 +287,7 @@ class assignment2_Part1:
 		clf.fit(X_train,y_train)
 		# prediction = clf.predict(X_test)
 
-		clf_naive = MultinomialNB()
+		clf_naive = BernoulliNB()
 		# clf_naive = GaussianNB()
 		clf_naive.fit(X_train,y_train)
 		# sum_naive += clf_naive.score(X_test,y_test)
@@ -697,8 +698,8 @@ if __name__ == '__main__':
 	#part1Obj.nGram('sad_t50.tsv',50)
 	#part1Obj.nGram('sad_t100.tsv',100)
 
-	# part1Obj.classifierDataAffect()
-	part1Obj.classifierDataNGram()
+	part1Obj.classifierDataAffect()
+	# part1Obj.classifierDataNGram()
 
 	# part1Obj.nGram()
 	
